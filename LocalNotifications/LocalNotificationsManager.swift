@@ -33,5 +33,17 @@ class LocalNotificationsManager: ObservableObject {
             }
         }
     }
+    func schedule(localNotification: LocalNotification) async {
+        let content = UNMutableNotificationContent()
+        content.title = localNotification.title
+        content.body = localNotification.body
+        content.sound = .default
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: localNotification.timeInterval, repeats: false)
+        
+        let request = UNNotificationRequest(identifier: localNotification.identifier, content: content, trigger: trigger)
+        
+        try? await notificationCenter.add(request)
+    }
     
 }

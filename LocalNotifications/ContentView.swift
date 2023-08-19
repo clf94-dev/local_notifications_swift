@@ -18,7 +18,10 @@ struct ContentView: View {
                 if lnManager.isGranted {
                     GroupBox("Schedule") {
                         Button("Interval Notification") {
-                            
+                            Task {
+                                let localNotification = LocalNotification(identifier: UUID().uuidString, title: "Some title", body: "some body", timeInterval: 5, repeats: false)
+                                await lnManager.schedule(localNotification: localNotification)
+                            }
                         }
                         .buttonStyle(.bordered)
                         Button("Calendar Notification") {

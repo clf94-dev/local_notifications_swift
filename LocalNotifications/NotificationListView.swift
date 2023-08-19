@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct NotificationListView: View {
     @EnvironmentObject var lnManager: LocalNotificationsManager
     @Environment(\.scenePhase) var scenePhase
     var body: some View {
@@ -30,6 +30,19 @@ struct ContentView: View {
                         .buttonStyle(.bordered)
                     }
                     .frame(width: 300)
+                    List{
+                        ForEach(lnManager.pendingRequests, id: \.identifier){ request in
+                            VStack(alignment: .leading){
+                                Text(request.content.title)
+                                HStack{
+                                    Text(request.identifier)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            
+                        }
+                    }
                 } else {
                     Button("Enable notifications") {
                         lnManager.openSettings()
@@ -48,6 +61,7 @@ struct ContentView: View {
             if phase == .active {
                 Task {
                    await lnManager.getCurrentSettings()
+                await lnManager.getPendingRequests()
                 }
             }
             
@@ -55,9 +69,9 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct NotificationListView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        NotificationListView()
             .environmentObject(LocalNotificationsManager())
     }
 }

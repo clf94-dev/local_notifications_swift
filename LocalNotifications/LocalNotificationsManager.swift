@@ -12,6 +12,7 @@ import NotificationCenter
 class LocalNotificationsManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
     let notificationCenter = UNUserNotificationCenter.current()
     @Published var isGranted = false
+    @Published var pendingRequests: [UNNotificationRequest] = []
     
     override init() {
         super.init()
@@ -19,6 +20,7 @@ class LocalNotificationsManager: NSObject, ObservableObject, UNUserNotificationC
     }
     // delegate function
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        await getPendingRequests()
         return [.sound, .banner]
     }
     func requestAuthorization() async throws {
@@ -52,6 +54,12 @@ class LocalNotificationsManager: NSObject, ObservableObject, UNUserNotificationC
         let request = UNNotificationRequest(identifier: localNotification.identifier, content: content, trigger: trigger)
         
         try? await notificationCenter.add(request)
+        await getPendingRequests()
+    }
+    
+    func getPendingRequests() async {
+        pendingRequests = await notificationCenter.pendingNotificationRequests()
+        print("Pending: \(pendingRequests.count)")
     }
     
 }

@@ -49,7 +49,7 @@ class LocalNotificationsManager: NSObject, ObservableObject, UNUserNotificationC
         content.body = localNotification.body
         content.sound = .default
         
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: localNotification.timeInterval, repeats: false)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: localNotification.timeInterval, repeats: localNotification.repeats)
         
         let request = UNNotificationRequest(identifier: localNotification.identifier, content: content, trigger: trigger)
         

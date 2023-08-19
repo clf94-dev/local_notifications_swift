@@ -11,6 +11,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var lnManager: LocalNotificationsManager
+    @Environment(\.scenePhase) var scenePhase
     var body: some View {
         NavigationView {
             VStack {
@@ -39,6 +40,14 @@ struct ContentView: View {
         .navigationViewStyle(.stack)
         .task {
             try? await lnManager.requestAuthorization()
+        }
+        .onChange(of: scenePhase) { phase in
+            if phase == .active {
+                Task {
+                   await lnManager.getCurrentSettings()
+                }
+            }
+            
         }
     }
 }

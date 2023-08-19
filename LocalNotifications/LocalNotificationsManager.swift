@@ -9,10 +9,18 @@ import Foundation
 import NotificationCenter
 
 @MainActor
-class LocalNotificationsManager: ObservableObject {
+class LocalNotificationsManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
     let notificationCenter = UNUserNotificationCenter.current()
     @Published var isGranted = false
     
+    override init() {
+        super.init()
+        notificationCenter.delegate = self
+    }
+    // delegate function
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        return [.sound, .banner]
+    }
     func requestAuthorization() async throws {
         try await notificationCenter.requestAuthorization(options: [.sound, .badge, .alert])
         await getCurrentSettings()

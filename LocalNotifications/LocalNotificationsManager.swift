@@ -62,4 +62,11 @@ class LocalNotificationsManager: NSObject, ObservableObject, UNUserNotificationC
         print("Pending: \(pendingRequests.count)")
     }
     
+    func removeRequest(withIdentifier identifier: String){
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: [identifier])
+        if let index = pendingRequests.firstIndex(where: {$0.identifier == identifier}) {
+            pendingRequests.remove(at: index)
+        }
+    }
+    
 }

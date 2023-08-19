@@ -39,6 +39,10 @@ struct NotificationListView: View {
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }
+                            }.swipeActions{
+                                Button("Delete", role: .destructive){
+                                    lnManager.removeRequest(withIdentifier: request.identifier)
+                                }
                             }
                             
                         }

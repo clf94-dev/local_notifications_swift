@@ -56,6 +56,16 @@ struct NotificationListView: View {
                 // List View Here
             }
             .navigationTitle("Local Notifications")
+            .toolbar{
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button{
+                        lnManager.clearRequests()
+                    } label: {
+                        Image(systemName: "clear.fill")
+                            .imageScale(.large)
+                    }
+                }
+            }
         }
         .navigationViewStyle(.stack)
         .task {

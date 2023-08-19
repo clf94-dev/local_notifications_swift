@@ -11,9 +11,10 @@ import SwiftUI
 
 @main
 struct AppEntry: App {
+    @StateObject var lnManager = LocalNotificationsManager()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environmentObject(lnManager)
         }
     }
 }

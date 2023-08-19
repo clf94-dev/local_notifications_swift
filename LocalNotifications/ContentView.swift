@@ -10,30 +10,42 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var lnManager: LocalNotificationsManager
     var body: some View {
         NavigationView {
             VStack {
-                GroupBox("Schedule") {
-                    Button("Interval Notification") {
-                        
+                if lnManager.isGranted {
+                    GroupBox("Schedule") {
+                        Button("Interval Notification") {
+                            
+                        }
+                        .buttonStyle(.bordered)
+                        Button("Calendar Notification") {
+                            
+                        }
+                        .buttonStyle(.bordered)
                     }
-                    .buttonStyle(.bordered)
-                    Button("Calendar Notification") {
-                        
+                    .frame(width: 300)
+                } else {
+                    Button("Enable notifications") {
+                        lnManager.openSettings()
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.borderedProminent)
                 }
-                .frame(width: 300)
                 // List View Here
             }
             .navigationTitle("Local Notifications")
         }
         .navigationViewStyle(.stack)
+        .task {
+            try? await lnManager.requestAuthorization()
+        }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(LocalNotificationsManager())
     }
 }

@@ -23,6 +23,7 @@ struct NotificationListView: View {
                                 var localNotification = LocalNotification(identifier: UUID().uuidString, title: "Some title", body: "some body", timeInterval: 10, repeats: false)
                                 localNotification.subtitle = "This is a subtitle"
                                 localNotification.bundleImageName = "Stewart.png"
+                                localNotification.userInfo = ["nextView": NextView.promo.rawValue]
                                 await lnManager.schedule(localNotification: localNotification)
                             }
                         }
@@ -66,6 +67,9 @@ struct NotificationListView: View {
                 }
                 // List View Here
             }
+            .sheet(item: $lnManager.nextView, content: {nextView in
+                nextView.view()
+            })
             .navigationTitle("Local Notifications")
             .toolbar{
                 ToolbarItem(placement: .topBarTrailing) {

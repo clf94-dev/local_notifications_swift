@@ -13,6 +13,7 @@ class LocalNotificationsManager: NSObject, ObservableObject{
     let notificationCenter = UNUserNotificationCenter.current()
     @Published var isGranted = false
     @Published var pendingRequests: [UNNotificationRequest] = []
+    @Published var nextView: NextView?
     
     override init() {
         super.init()
@@ -99,5 +100,11 @@ extension LocalNotificationsManager:  UNUserNotificationCenterDelegate  {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
         await getPendingRequests()
         return [.sound, .banner]
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) {
+        if let value = response.notification.request.content.userInfo["nextView"] as? String {
+            nextView = NextView(rawValue: value)
+        }
     }
 }

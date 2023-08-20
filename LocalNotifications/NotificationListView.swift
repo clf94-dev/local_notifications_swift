@@ -24,6 +24,7 @@ struct NotificationListView: View {
                                 localNotification.subtitle = "This is a subtitle"
                                 localNotification.bundleImageName = "Stewart.png"
                                 localNotification.userInfo = ["nextView": NextView.promo.rawValue]
+                                localNotification.categoryIdentifier = "snooze"
                                 await lnManager.schedule(localNotification: localNotification)
                             }
                         }

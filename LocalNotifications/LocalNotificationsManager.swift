@@ -22,6 +22,7 @@ class LocalNotificationsManager: NSObject, ObservableObject{
     
     func requestAuthorization() async throws {
         try await notificationCenter.requestAuthorization(options: [.sound, .badge, .alert])
+        registerActions()
         await getCurrentSettings()
     }
     
@@ -56,6 +57,9 @@ class LocalNotificationsManager: NSObject, ObservableObject{
         }
         if let userInfo = localNotification.userInfo {
             content.userInfo = userInfo
+        }
+        if let categoryIdentifier = localNotification.categoryIdentifier {
+            content.categoryIdentifier = categoryIdentifier
         }
         content.sound = .default
         if localNotification.scheduleType == .time {
@@ -96,15 +100,48 @@ class LocalNotificationsManager: NSObject, ObservableObject{
 }
 
 extension LocalNotificationsManager:  UNUserNotificationCenterDelegate  {
+    func registerActions() {
+        let snooze10Action = UNNotificationAction(identifier: "snooze10", title: "Snooze 10 seconds")
+        let snooze60Action = UNNotificationAction(identifier: "snooze60", title: "Snooze 60 seconds")
+        let snoozeCategory = UNNotificationCategory(identifier: "snooze", actions: [snooze10Action, snooze60Action], intentIdentifiers: [])
+        
+        notificationCenter.setNotificationCategories([snoozeCategory])
+    }
+    
     // delegate function
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
         await getPendingRequests()
         return [.sound, .banner]
     }
     
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         if let value = response.notification.request.content.userInfo["nextView"] as? String {
             nextView = NextView(rawValue: value)
+        }
+        
+        // Respond to snooze action
+        var snoozeInterval: Double?
+        if response.actionIdentifier == "snooze10" {
+            snoozeInterval = 10
+        } else if response.actionIdentifier == "snooze60" {
+            snoozeInterval = 60
+        }
+        
+        if let snoozeInterval = snoozeInterval {
+            let content = response.notification.request.content
+            let newContent = content.mutableCopy() as! UNMutableNotificationContent
+            let newTrigger = UNTimeIntervalNotificationTrigger(timeInterval: snoozeInterval, repeats: false)
+            
+            let request = UNNotificationRequest(identifier: UUID().uuidString,
+                                                content: newContent,
+                                                trigger: newTrigger)
+            
+            do {
+                try await notificationCenter.add(request)
+            } catch {
+                print(error.localizedDescription)
+            }
+            await getPendingRequests()
         }
     }
 }

@@ -41,5 +41,6 @@ struct LocalNotification {
     var timeInterval: Double?
     var repeats: Bool
     var dateComponents: DateComponents?
+    var categoryIdentifier: String?
     
 }

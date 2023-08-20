@@ -36,6 +36,7 @@ struct LocalNotification {
     var title: String
     var subtitle: String?
     var body: String
+    var bundleImageName: String?
     var timeInterval: Double?
     var repeats: Bool
     var dateComponents: DateComponents?

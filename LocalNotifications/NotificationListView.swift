@@ -20,8 +20,9 @@ struct NotificationListView: View {
                     GroupBox("Schedule") {
                         Button("Interval Notification") {
                             Task {
-                                var localNotification = LocalNotification(identifier: UUID().uuidString, title: "Some title", body: "some body", timeInterval: 60, repeats: true)
+                                var localNotification = LocalNotification(identifier: UUID().uuidString, title: "Some title", body: "some body", timeInterval: 10, repeats: false)
                                 localNotification.subtitle = "This is a subtitle"
+                                localNotification.bundleImageName = "Stewart.png"
                                 await lnManager.schedule(localNotification: localNotification)
                             }
                         }

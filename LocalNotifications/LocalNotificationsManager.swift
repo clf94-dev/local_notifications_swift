@@ -50,6 +50,13 @@ class LocalNotificationsManager: NSObject, ObservableObject, UNUserNotificationC
         if let subtitle = localNotification.subtitle {
             content.subtitle = subtitle
         }
+        if let bundleImageName = localNotification.bundleImageName {
+            if let url = Bundle.main.url(forResource: bundleImageName, withExtension: ""){
+                if let attachment = try? UNNotificationAttachment(identifier: bundleImageName, url: url) {
+                    content.attachments = [attachment]
+                }
+            }
+        }
         content.sound = .default
         if localNotification.scheduleType == .time {
             guard let timeInterval = localNotification.timeInterval else { return }

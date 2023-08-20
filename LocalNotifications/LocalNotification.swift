@@ -34,8 +34,10 @@ struct LocalNotification {
     var identifier: String
     var scheduleType: ScheduleType
     var title: String
+    var subtitle: String?
     var body: String
     var timeInterval: Double?
     var repeats: Bool
     var dateComponents: DateComponents?
+    
 }

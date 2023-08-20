@@ -47,6 +47,9 @@ class LocalNotificationsManager: NSObject, ObservableObject, UNUserNotificationC
         let content = UNMutableNotificationContent()
         content.title = localNotification.title
         content.body = localNotification.body
+        if let subtitle = localNotification.subtitle {
+            content.subtitle = subtitle
+        }
         content.sound = .default
         if localNotification.scheduleType == .time {
             guard let timeInterval = localNotification.timeInterval else { return }

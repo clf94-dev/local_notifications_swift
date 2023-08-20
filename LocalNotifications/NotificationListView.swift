@@ -12,6 +12,7 @@ import SwiftUI
 struct NotificationListView: View {
     @EnvironmentObject var lnManager: LocalNotificationsManager
     @Environment(\.scenePhase) var scenePhase
+    @State var scheduleDate = Date()
     var body: some View {
         NavigationView {
             VStack {
@@ -24,10 +25,18 @@ struct NotificationListView: View {
                             }
                         }
                         .buttonStyle(.bordered)
-                        Button("Calendar Notification") {
-                            
+                        GroupBox {
+                            DatePicker("", selection: $scheduleDate)
+                            Button("Calendar Notification") {
+                                Task {
+                                    let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: scheduleDate)
+                                    let localNotification = LocalNotification(identifier: UUID().uuidString, title: "Calendar notification", body: "Some body", repeats: false, dateComponents: dateComponents)
+                                    
+                                    await lnManager.schedule(localNotification: localNotification)
+                                }
+                            }
+                            .buttonStyle(.bordered)
                         }
-                        .buttonStyle(.bordered)
                     }
                     .frame(width: 300)
                     List{

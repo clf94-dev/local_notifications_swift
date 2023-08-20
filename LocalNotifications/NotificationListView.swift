@@ -23,7 +23,7 @@ struct NotificationListView: View {
                                 var localNotification = LocalNotification(identifier: UUID().uuidString, title: "Some title", body: "some body", timeInterval: 10, repeats: false)
                                 localNotification.subtitle = "This is a subtitle"
                                 localNotification.bundleImageName = "Stewart.png"
-                                localNotification.userInfo = ["nextView": NextView.promo.rawValue]
+                                localNotification.userInfo = ["nextView": NextView.renew.rawValue]
                                 localNotification.categoryIdentifier = "snooze"
                                 await lnManager.schedule(localNotification: localNotification)
                             }
@@ -40,6 +40,15 @@ struct NotificationListView: View {
                                 }
                             }
                             .buttonStyle(.bordered)
+                        }
+                        Button ("Promo Offer") {
+                            Task {
+                                let dateComponents = DateComponents(day: 20, hour: 17, minute: 0)
+                                var localNotification = LocalNotification(identifier: UUID().uuidString, title: "Special Promotion", body: "Take advantage of the monthly promotion", repeats: true, dateComponents: dateComponents)
+                                localNotification.bundleImageName = "Stewart.png"
+                                localNotification.userInfo = ["nextView": NextView.promo.rawValue]
+                                await lnManager.schedule(localNotification: localNotification)
+                            }
                         }
                     }
                     .frame(width: 300)

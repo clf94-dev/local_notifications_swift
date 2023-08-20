@@ -53,6 +53,9 @@ class LocalNotificationsManager: NSObject, ObservableObject{
                 }
             }
         }
+        if let userInfo = localNotification.userInfo {
+            content.userInfo = userInfo
+        }
         content.sound = .default
         if localNotification.scheduleType == .time {
             guard let timeInterval = localNotification.timeInterval else { return }

@@ -9,7 +9,7 @@ import Foundation
 import NotificationCenter
 
 @MainActor
-class LocalNotificationsManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
+class LocalNotificationsManager: NSObject, ObservableObject{
     let notificationCenter = UNUserNotificationCenter.current()
     @Published var isGranted = false
     @Published var pendingRequests: [UNNotificationRequest] = []
@@ -18,11 +18,7 @@ class LocalNotificationsManager: NSObject, ObservableObject, UNUserNotificationC
         super.init()
         notificationCenter.delegate = self
     }
-    // delegate function
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
-        await getPendingRequests()
-        return [.sound, .banner]
-    }
+    
     func requestAuthorization() async throws {
         try await notificationCenter.requestAuthorization(options: [.sound, .badge, .alert])
         await getCurrentSettings()
@@ -93,4 +89,12 @@ class LocalNotificationsManager: NSObject, ObservableObject, UNUserNotificationC
         pendingRequests.removeAll()
     }
     
+}
+
+extension LocalNotificationsManager:  UNUserNotificationCenterDelegate  {
+    // delegate function
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        await getPendingRequests()
+        return [.sound, .banner]
+    }
 }
